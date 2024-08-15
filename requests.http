@@ -1,0 +1,15 @@
+GET https://example.com/comments/1 HTTP/1.1
+
+###
+
+POST http://localhost:8000/attributes HTTP/1.1
+content-type: application/json
+
+{
+    "id": "9ea9b171-9292-4d50-810f-4e87c418ef8f",
+    "name": "Alexis",
+    "type": "color",
+    "isActive": true,
+    "createdAt": "2024-01-01",
+    "deletedAt": null
+}
