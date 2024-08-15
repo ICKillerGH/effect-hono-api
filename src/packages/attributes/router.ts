@@ -6,6 +6,7 @@ import { decodeUnknownEither } from "@effect/schema/Schema";
 import { runtime } from "../../lib/runtime";
 import { validator } from "hono/validator";
 import type { Schema } from "@effect/schema";
+import { getAttributes } from "./services/get-attributes";
 
 const attributesRouter = new Hono();
 
@@ -23,6 +24,14 @@ function validateSchema<A, I>(
     );
   });
 }
+
+attributesRouter.get("/", (c) => {
+  const effect = Effect.gen(function* () {
+    return c.json(yield* getAttributes());
+  });
+
+  return runtime.runPromise(effect);
+});
 
 attributesRouter.post("/", validateSchema("json", Attribute), (c) => {
   const effect = Effect.gen(function* () {

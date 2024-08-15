@@ -1,4 +1,4 @@
-GET https://example.com/comments/1 HTTP/1.1
+GET http://localhost:8000/attributes HTTP/1.1
 
 ###
 

@@ -25,7 +25,7 @@ const makeRepository = Effect.gen(function* () {
   });
 
   return {
-    findByCriteria: () => Effect.void,
+    findByCriteria: () => Effect.succeed(attributes),
     save: (attribute: Attribute) =>
       Effect.sync(() => {
         attributes.push(attribute);
@@ -38,11 +38,4 @@ export class AttributesRepository extends Context.Tag(
   "@packages/attributes/AttributesRepository"
 )<AttributesRepository, Effect.Effect.Success<typeof makeRepository>>() {
   static readonly Live = Layer.effect(this, makeRepository);
-  static readonly Testing = Layer.succeed(
-    this,
-    AttributesRepository.of({
-      save: () => Effect.void,
-      findByCriteria: () => Effect.void,
-    })
-  );
 }
