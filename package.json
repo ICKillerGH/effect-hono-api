@@ -11,8 +11,10 @@
   "dependencies": {
     "@effect/schema": "^0.71.0",
     "@hono/effect-validator": "^1.0.1",
+    "drizzle-orm": "^0.33.0",
     "effect": "^3.6.4",
     "hono": "^4.5.5",
+    "mysql2": "^3.11.0",
     "typescript": "^5.0.0"
   }
 }

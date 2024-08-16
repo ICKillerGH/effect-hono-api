@@ -1,36 +1,23 @@
 import { Hono } from "hono";
 import { Attribute } from "./repositories/attributes-repository";
-import { Effect, Either, pipe } from "effect";
+import { Effect } from "effect";
 import { createAttribute } from "./services/create-attribute";
-import { decodeUnknownEither } from "@effect/schema/Schema";
-import { runtime } from "../../lib/runtime";
-import { validator } from "hono/validator";
-import type { Schema } from "@effect/schema";
+import { handleParseError, runtime } from "../shared/runtime";
 import { getAttributes } from "./services/get-attributes";
+import { validateSchema } from "../shared/middleware";
 
 const attributesRouter = new Hono();
 
-type ValidatorFrom = "cookie" | "form" | "json" | "query" | "param";
-
-function validateSchema<A, I>(
-  from: ValidatorFrom,
-  schema: Schema.Schema<A, I, never>
-) {
-  return validator(from, (value, c) => {
-    return pipe(
-      value,
-      decodeUnknownEither(schema),
-      Either.getOrElse((left) => c.json({ [left.name]: [left.message] }))
-    );
-  });
-}
-
-attributesRouter.get("/", (c) => {
+attributesRouter.get("/", async (c) => {
   const effect = Effect.gen(function* () {
     return c.json(yield* getAttributes());
-  });
+  }).pipe(Effect.catchTag("ParseError", handleParseError(c)));
 
-  return runtime.runPromise(effect);
+  const res = await runtime.runPromise(effect);
+
+  await runtime.dispose();
+
+  return res;
 });
 
 attributesRouter.post("/", validateSchema("json", Attribute), (c) => {
