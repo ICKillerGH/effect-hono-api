@@ -13,11 +13,7 @@ attributesRouter.get("/", async (c) => {
     return c.json(yield* getAttributes());
   }).pipe(Effect.catchTag("ParseError", handleParseError(c)));
 
-  const res = await runtime.runPromise(effect);
-
-  await runtime.dispose();
-
-  return res;
+  return runtime.runPromise(effect);
 });
 
 attributesRouter.post("/", validateSchema("json", Attribute), (c) => {

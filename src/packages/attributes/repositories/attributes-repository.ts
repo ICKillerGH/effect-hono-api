@@ -57,7 +57,7 @@ const makeRepository = Effect.gen(function* () {
   };
 });
 
-export class AttributesRepository extends Context.Tag(
+export class AttributesRepository extends Effect.Tag(
   "@packages/attributes/AttributesRepository"
 )<AttributesRepository, Effect.Effect.Success<typeof makeRepository>>() {
   static readonly Live = Layer.effect(this, makeRepository).pipe(
