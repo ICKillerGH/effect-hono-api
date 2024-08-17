@@ -1,5 +1,7 @@
+import * as MysqlDrizzle from "@effect/sql-drizzle/Mysql";
+import { MysqlClient } from "@effect/sql-mysql2";
 import { drizzle } from "drizzle-orm/mysql2";
-import { Context, Data, Effect, Layer } from "effect";
+import { Config, Context, Data, Effect, Layer, Redacted } from "effect";
 import mysql from "mysql2/promise";
 
 export class DatabaseConnectionError extends Data.TaggedError(
@@ -37,3 +39,14 @@ export class DrizzleService extends Context.Tag(
     Layer.provide(ConnectionService.Live)
   );
 }
+
+export const MysqlLive = MysqlClient.layer({
+  host: Config.string("DATABASE_HOST"),
+  database: Config.string("DATABASE_NAME"),
+  username: Config.string("DATABASE_USER"),
+  password: Config.succeed(Redacted.make("DATABASE_PASSWORD")),
+  // transformQueryNames: Config.succeed(String.camelToSnake),
+  // transformResultNames: Config.succeed(String.snakeToCamel),
+});
+
+export const DrizzleLive = MysqlDrizzle.layer.pipe(Layer.provide(MysqlLive));

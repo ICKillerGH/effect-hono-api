@@ -1,5 +1,5 @@
 import { Schema } from "@effect/schema";
-import { Context, Effect, flow, Layer } from "effect";
+import { Effect, flow, Layer } from "effect";
 import { DrizzleService } from "../../database/services/database-service";
 import { attributes } from "../../database/schema";
 
@@ -38,14 +38,14 @@ const makeRepository = Effect.gen(function* () {
 
   const findByCriteria = () =>
     Effect.gen(function* () {
-      const results = yield* Effect.promise(() => db.select().from(attributes));
+      const results = yield* db.select().from(attributes);
 
       return yield* encodeArray(results);
     });
 
   const save = (attribute: Attribute) =>
-    Effect.promise(async () => {
-      await db
+    Effect.gen(function* () {
+      yield* db
         .insert(attributes)
         .values(attribute)
         .onDuplicateKeyUpdate({ set: attribute });

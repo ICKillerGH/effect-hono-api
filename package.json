@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@effect/schema": "^0.71.0",
+    "@effect/sql-drizzle": "^0.7.3",
+    "@effect/sql-mysql2": "^0.9.3",
     "@hono/effect-validator": "^1.0.1",
     "drizzle-orm": "^0.33.0",
     "effect": "^3.6.4",
