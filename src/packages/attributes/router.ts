@@ -32,4 +32,4 @@ attributesRouter.post("/", validateSchema("json", Attribute), (c) => {
   return runtime.runPromise(effect);
 });
 
-export { attributesRouter };
+export default attributesRouter;

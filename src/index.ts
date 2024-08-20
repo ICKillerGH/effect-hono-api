@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { attributesRouter } from "./packages/attributes/router";
+import attributesRouter from "./packages/attributes/router";
 
 const app = new Hono();
 
