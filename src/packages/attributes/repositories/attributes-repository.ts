@@ -2,6 +2,7 @@ import { Effect, Layer } from "effect";
 import { DrizzleService } from "../../database/services/database-service";
 import { attributes } from "../../database/schema";
 import { Attribute } from "../types/attribute";
+import { eq } from "drizzle-orm";
 
 const makeRepository = Effect.gen(function* () {
   const db = yield* DrizzleService;
@@ -11,6 +12,16 @@ const makeRepository = Effect.gen(function* () {
       const results = yield* db.select().from(attributes);
 
       return yield* Attribute.encodeArray(results);
+    });
+
+  const findOneById = (id: Attribute.AttributeId) =>
+    Effect.gen(function* () {
+      const results = yield* db
+        .select()
+        .from(attributes)
+        .where(eq(attributes.id, id));
+
+      return yield* Attribute.encode(results[0]);
     });
 
   const save = (attribute: Attribute) =>
@@ -25,6 +36,7 @@ const makeRepository = Effect.gen(function* () {
 
   return {
     findByCriteria,
+    findOneById,
     save,
   };
 });
