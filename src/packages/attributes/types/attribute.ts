@@ -16,7 +16,7 @@ const AttributeTypeTransform = Schema.transform(Schema.String, AttributeType, {
 export class Attribute extends Schema.Class<Attribute>(
   "@packages/attributes/Attribute"
 )({
-  id: Schema.UUID,
+  id: Schema.UUID.pipe(Schema.brand("AttributeId")),
   name: Schema.NonEmptyString,
   type: AttributeTypeTransform,
   isActive: Schema.Boolean,
@@ -31,4 +31,8 @@ export class Attribute extends Schema.Class<Attribute>(
       (todos): ReadonlyArray<Schema.Schema.Encoded<typeof Attribute>> => todos
     )
   );
+}
+
+export namespace Attribute {
+  export type AttributeId = Attribute["id"];
 }
