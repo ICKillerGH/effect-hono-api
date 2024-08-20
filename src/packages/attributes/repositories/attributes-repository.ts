@@ -1,37 +1,7 @@
-import { Schema } from "@effect/schema";
-import { Effect, flow, Layer } from "effect";
+import { Effect, Layer } from "effect";
 import { DrizzleService } from "../../database/services/database-service";
 import { attributes } from "../../database/schema";
-
-const AttributeType = Schema.Union(
-  Schema.Literal("color"),
-  Schema.Literal("label")
-);
-type AttributeType = Schema.Schema.Type<typeof AttributeType>;
-
-const AttributeTypeTransform = Schema.transform(Schema.String, AttributeType, {
-  strict: true,
-  decode: (value) => value as AttributeType,
-  encode: (value) => value,
-});
-
-export const Attribute = Schema.Struct({
-  id: Schema.UUID,
-  name: Schema.NonEmptyString,
-  type: AttributeTypeTransform,
-  isActive: Schema.Boolean,
-  createdAt: Schema.DateFromString,
-  deletedAt: Schema.NullOr(Schema.DateFromString),
-});
-
-export const encodeArray = flow(
-  Schema.encode(Schema.Array(Attribute)),
-  Effect.map(
-    (todos): ReadonlyArray<Schema.Schema.Encoded<typeof Attribute>> => todos
-  )
-);
-
-export type Attribute = Schema.Schema.Type<typeof Attribute>;
+import { Attribute } from "../types/attribute";
 
 const makeRepository = Effect.gen(function* () {
   const db = yield* DrizzleService;
@@ -40,7 +10,7 @@ const makeRepository = Effect.gen(function* () {
     Effect.gen(function* () {
       const results = yield* db.select().from(attributes);
 
-      return yield* encodeArray(results);
+      return yield* Attribute.encodeArray(results);
     });
 
   const save = (attribute: Attribute) =>
@@ -50,7 +20,7 @@ const makeRepository = Effect.gen(function* () {
         .values(attribute)
         .onDuplicateKeyUpdate({ set: attribute });
 
-      return yield* Schema.encode(Attribute)(attribute);
+      return yield* Attribute.encode(attribute);
     });
 
   return {

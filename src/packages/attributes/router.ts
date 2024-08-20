@@ -1,11 +1,11 @@
 import { Hono } from "hono";
-import { Attribute } from "./repositories/attributes-repository";
 import { Effect } from "effect";
 import { createAttribute } from "./services/create-attribute";
 import { runtime } from "../shared/runtime";
 import { getAttributes } from "./services/get-attributes";
 import { validateSchema } from "../shared/middleware";
 import { handleParseError, handleSqlError } from "../shared/lib";
+import { Attribute } from "./types/attribute";
 
 const attributesRouter = new Hono();
 
