@@ -24,12 +24,10 @@ attributesRouter.get("/", async (c) => {
 
 attributesRouter.post("/", validateSchema("json", Attribute), (c) => {
   const effect = Effect.gen(function* () {
-    const data = c.req.valid("json");
-
-    yield* createAttribute(data);
+    const data = yield* createAttribute(c.req.valid("json"));
 
     return c.json(data);
-  }).pipe(Effect.catchTag("SqlError", handleSqlError(c)));
+  });
 
   return runtime.runPromise(effect);
 });

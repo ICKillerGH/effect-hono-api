@@ -49,6 +49,8 @@ const makeRepository = Effect.gen(function* () {
         .insert(attributes)
         .values(attribute)
         .onDuplicateKeyUpdate({ set: attribute });
+
+      return yield* Schema.encode(Attribute)(attribute);
     });
 
   return {
