@@ -1,10 +1,7 @@
-import { Data, Effect } from "effect";
+import { Effect } from "effect";
 import { ProductsRepository } from "../products-repository";
 import type { Product } from "../types/product";
-
-export class ProductNotFound extends Data.TaggedError(
-  "@packages/products/errors/ProductNotFound"
-) {}
+import { ProductNotFound } from "../errors/product-not-found";
 
 export const decreaseProductStock = (id: Product.ProductId, by: number) =>
   Effect.gen(function* () {
