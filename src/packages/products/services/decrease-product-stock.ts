@@ -1,19 +1,18 @@
-import { Effect } from "effect";
+import { Data, Effect } from "effect";
 import { ProductsRepository } from "../products-repository";
 import type { Product } from "../types/product";
-import { InsufficentStock } from "../errors/insufficent-stock";
+
+export class ProductNotFound extends Data.TaggedError(
+  "@packages/products/errors/ProductNotFound"
+) {}
 
 export const decreaseProductStock = (id: Product.ProductId, by: number) =>
-  Effect.gen(function* () {    
-    const hasEnoughStock = yield* ProductsRepository.hasEnoughStock(id);
+  Effect.gen(function* () {
+    const product = yield* yield* ProductsRepository.findProductById(id);
 
-    if (hasEnoughStock) {
-      return yield* new InsufficentStock();
-    }
+    const updatedProduct = yield* product.decreaseStock(by);
 
-    
-
-    yield* ProductsRepository.
-
-    return yield* Effect.void;
-  });
+    return yield* ProductsRepository.save(updatedProduct);
+  }).pipe(
+    Effect.catchTag("NoSuchElementException", () => new ProductNotFound())
+  );

@@ -1,13 +1,23 @@
-import { Effect, Layer } from "effect";
+import { Effect, Layer, Option } from "effect";
 import { DrizzleService } from "../database/services/database-service";
-import type { Product } from "./types/product";
+import { Product } from "./types/product";
 
 const makeRepository = Effect.gen(function* () {
   const _ = yield* DrizzleService;
 
-  const hasEnoughStock = (_: Product) => Effect.sync(() => Math.random() > 0.5);
+  const findProductById = (
+    _: Product.ProductId
+  ): Effect.Effect<Option.Option<Product>, never, never> =>
+    Effect.sync(() => {
+      return Option.fromNullable(null);
+    });
 
-  return { hasEnoughStock };
+  const save = (product: Product) =>
+    Effect.gen(function* () {
+      return yield* Product.encode(product);
+    });
+
+  return { findProductById, save };
 });
 
 export class ProductsRepository extends Effect.Tag(
